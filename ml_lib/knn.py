@@ -26,10 +26,3 @@ class KNN:
             sum += pow(abs(x_p1 - x_p2), self.p)
         return pow(sum, 1/self.p)
     
-    def score(self, x_test, y_test):
-        correct = 0
-        predict = self.predict(x_test)
-        for p, y in zip(predict, y_test):
-            if p == y :
-                correct += 1
-        return correct/len(y_test)
