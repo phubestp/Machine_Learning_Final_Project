@@ -4,53 +4,76 @@ import math
 class SVM:
 
     def __init__(self, d, C=1, iteration=1000, learning_rate=0.001) -> None:
-        self.d = d
-        self.C = C
-        self.iteration = iteration
+        """
+        Initialize the Support Vector Machine.
+        
+        Parameters:
+        - d: Dimension of features
+        - C: Regularization parameter (default=1)
+        - iteration: Number of iterations for gradient descent (default=1000)
+        - learning_rate: Learning rate for gradient descent (default=0.001)
+        """
+        self.d = d  
+        self.C = C 
+        self.iteration = iteration 
         self.learning_rate = learning_rate
-        self.w = np.zeros(d)
-        self.b = 0
-    
-    # def hinge_loss(self):
-    #     return np.dot(self.w, self.w.T) + self.C * sum([max(1 - y * (np.dot(self.w, x.T) + self.b), 0) for (x, y) in zip(self.X_train, self.y_train)]) 
-    
-    # def rbf_kernel(self, X, Z, gamma=1):
-    #     distance_sq = np.sum((X[:, np.newaxis] - Z) ** 2, axis=2)
-    #     return np.exp(-gamma * distance_sq)
-
-    # def poly_kernel(self, X, Z, degree=3):
-    #     return (np.dot(X, Z.T) + 1)**degree
+        self.w = np.zeros(d) 
+        self.b = 0 
 
     def calc_grad(self):
-        dw = np.zeros(self.d)
-        db = 0
+        """
+        Calculate gradients of weights and bias.
+        
+        Returns:
+        - Gradients of weights and bias
+        """
+        dw = np.zeros(self.d) 
+        db = 0  
         for (x, y) in zip(self.X_train, self.y_train): 
+            # Check if the sample is not correctly classified
             if y * (np.dot(self.w, x.T) + self.b) < 1:
-                dw += self.w - (self.C * y * x)
-                db += -1 * self.C * y
+                dw += self.w - (self.C * y * x)  # Update gradients for misclassified sample
+                db += -1 * self.C * y  # Update gradient of bias
             else:
-                dw += self.w
+                dw += self.w  # Update gradients for correctly classified sample
         return dw, db
     
     def grad_desc(self):
+        """
+        Perform gradient descent to update weights and bias.
+        """
         for i in range(self.iteration):
-            dw, db = self.calc_grad()
-            self.w -= self.learning_rate * dw
-            self.b -= self.learning_rate * db
+            dw, db = self.calc_grad() 
+            self.w -= self.learning_rate * dw  # Update weights
+            self.b -= self.learning_rate * db  # Update bias
 
     def fit(self, X_train, y_train):
-        self.X_train = X_train
-        self.y_train = y_train
+        """
+        Fit the SVM model.
+        
+        Parameters:
+        - X_train: Training data features
+        - y_train: Training data labels
+        """
+        self.X_train = X_train 
+        self.y_train = y_train 
 
     def predict(self, X_test):
-        self.grad_desc()
+        """
+        Predict labels for test data using the trained SVM model.
+        
+        Parameters:
+        - X_test: Test data features
+        
+        Returns:
+        - Predicted labels for the test data
+        """
+        self.grad_desc()  # Perform gradient descent to optimize parameters
         predicted = []
         for x in X_test:
-            if -1*np.dot(self.w, x) + self.b > 0:
+            # Predict label based on decision boundary
+            if -1 * np.dot(self.w, x) + self.b > 0:
                 predicted.append(-1)
             else:
                 predicted.append(1)
         return predicted
-
-
-        
