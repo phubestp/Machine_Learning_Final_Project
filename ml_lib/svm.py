@@ -31,7 +31,7 @@ class SVM:
         db = 0  
         for (x, y) in zip(self.X_train, self.y_train): 
             # Check if the sample is not correctly classified
-            if y * (np.dot(self.w, x.T) + self.b) < 1:
+            if y * (np.dot(self.w.T, x) + self.b) < 1:
                 dw += self.w - (self.C * y * x)  # Update gradients for misclassified sample
                 db += -1 * self.C * y  # Update gradient of bias
             else:
@@ -72,7 +72,7 @@ class SVM:
         predicted = []
         for x in X_test:
             # Predict label based on decision boundary
-            if -1 * np.dot(self.w, x) + self.b > 0:
+            if np.dot(self.w.T, x) + self.b < 0:
                 predicted.append(-1)
             else:
                 predicted.append(1)

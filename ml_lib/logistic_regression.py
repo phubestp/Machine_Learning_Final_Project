@@ -1,5 +1,5 @@
-import math
 import numpy as np
+import math
 
 class LogisticRegression:
 
@@ -13,43 +13,45 @@ class LogisticRegression:
         - learning_rate: Learning rate for gradient descent 
         """
         self.d = d 
-        self.w = np.zeros(d)  
-        self.b = 0  
+        self.w = np.zeros(d+1)  
         self.iteration = iteration  
         self.learning_rate = learning_rate 
-
-    def calc_grad(self, y_train):
+    
+    def sigmoid(self, z):
         """
-        Calculate gradients of weights and bias
+        Calculate Sigmoid function
         
         Parameters:
-        - y_train: labels
+        - z: value
         
+        Returns:
+        - Value from sigmoid function
+        """
+        return 1 / (1 + np.exp(-z))
+
+    def calc_grad(self):
+        """
+        Calculate gradients of weights and bias
+
         Returns:
         - Gradients of weights and bias
         """
-        dw = np.zeros(self.d) 
-        db = 0  
-        for (x, y) in zip(self.X_train, y_train):
-            dw += x * y * (np.exp(y * np.dot(x.T, self.w) + self.b)) / ((np.exp(y * np.dot(x.T, self.w) + self.b) + 1))
-            db += y * (np.exp(y * np.dot(x.T, self.w) + self.b)) / ((np.exp(y * np.dot(x.T, self.w) + self.b) + 1))
-        return dw, db
+        dw = np.zeros(self.d+1) 
+        for (x, y) in zip(self.X_train, self.y_train):
+            x = np.array([*x, 1])
+            dw += -y*x*(np.exp(-y*np.dot(x.T, self.w))) / ((np.exp(-y*np.dot(x.T, self.w)) + 1))
+        return dw
     
-    def grad_desc(self, y_train):
+    def grad_desc(self):
         """
         Perform gradient descent to update weights and bias
-        
-        Parameters:
-        - y_train: labels
+
         """
-        self.w = np.zeros(self.d)  
-        self.b = 0  
         for i in range(self.iteration):
             # Calculate gradients
-            dw, db = self.calc_grad(y_train)
+            dw = self.calc_grad()
             # Update weights and bias using gradient descent
             self.w -= self.learning_rate * dw
-            self.b -= self.learning_rate * db
 
     def fit(self, X_train, y_train):
         """
@@ -59,8 +61,8 @@ class LogisticRegression:
         - X_train: Training data features
         - y_train: Training data labels
         """
-        self.X_train = X_train  # Store training features
-        self.y_train = y_train  # Store training labels
+        self.X_train = X_train 
+        self.y_train = y_train 
     
     def predict(self, X_test):
         """
@@ -72,13 +74,11 @@ class LogisticRegression:
         Returns:
         - Predicted labels for test data
         """
+        self.grad_desc()
         predicted = []  # Initialize list to store predictions
         for x in X_test:
-            # Calculate probabilities using logistic function
-            pos = 1 / (1 + np.exp((1 * ((np.dot(x.reshape(1, -1), self.w) + self.b)))[0]))
-            neg = 1 / (1 + np.exp((-1 * ((np.dot(x.reshape(1, -1), self.w) + self.b)))[0]))
-            # Make prediction based on higher probability
-            if pos > neg:
+            x = np.array([*x, 1])
+            if self.sigmoid(np.dot(self.w.T, x)) > 0.5:
                 predicted.append(1)
             else: 
                 predicted.append(-1)
