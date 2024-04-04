@@ -27,7 +27,7 @@ class Perceptron:
         self.create_hyperplane()
         predicted = []
         for x in X_test:
-            if np.dot(self.w.T, np.array([*x, 1])) > 0:
+            if np.dot(self.w, np.array([*x, 1]).reshape(-1, 1)) > 0:
                 predicted.append(1)
             else:
                 predicted.append(-1)
