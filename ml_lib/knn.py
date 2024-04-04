@@ -4,37 +4,14 @@ import statistics as st  # Importing necessary libraries
 class KNN:
     
     def __init__(self, n_neighbors, p):
-        """
-        Initialize KNN
-        
-        Parameters:
-        - n_neighbors: Number of neighbors
-        - p: Power parameter for distance 
-        """
         self.n_neighbors = n_neighbors  
         self.p = p  
         
     def fit(self, x_train, y_train):
-        """
-        Fit the KNN model
-        
-        Parameters:
-        - x_train: Training data features
-        - y_train: Training data labels
-        """
         self.x_train = x_train  
         self.y_train = y_train 
         
     def predict(self, new_x):
-        """
-        Predict the labels for new data points
-        
-        Parameters:
-        - new_x: New data points to predict labels for
-        
-        Returns:
-        - Predicted labels for new data points
-        """
         predict_list = []  # Initialize list to store predictions
         for new in new_x:
             # Calculate distances between new data point and all training data points
@@ -47,16 +24,6 @@ class KNN:
         return np.array(predict_list)  
     
     def distance(self, p1, p2): 
-        """
-        Calculate the distance between two points
-        
-        Parameters:
-        - p1: First point
-        - p2: Second point
-        
-        Returns:
-        - Minkowski distance between the two points
-        """
         sum = 0  # Initialize sum for distance calculation
         for x_p1, x_p2 in zip(p1, p2):
             # Calculate sum of absolute differences raised to the power p
